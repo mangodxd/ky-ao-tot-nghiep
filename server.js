@@ -1,14 +1,16 @@
+require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
 const { Octokit } = require("@octokit/rest");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-const REPO_OWNER = process.env.REPO_OWNER;
+const REPO_OWNER = process.env.REPO_OWNER; 
 const REPO_NAME = process.env.REPO_NAME;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
+const octokit = new Octokit({ auth: GITHUB_TOKEN });
 const JSON_FILE_PATH = 'sigs.json';
 
 app.use(cors());
