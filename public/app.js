@@ -267,7 +267,7 @@ const app = {
   },
 
   handleRoute() {
-    const hash = location.hash || '#/sign';
+    const hash = location.hash || '#/wall';
     document.getElementById('sign-view').classList.add('hidden');
     document.getElementById('wall-view').classList.add('hidden');
     if (hash === '#/wall') {
