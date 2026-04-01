@@ -79,8 +79,13 @@ body {
   display: grid; grid-template-columns: 1fr 1fr; gap: 30px; 
   max-width: 1000px; margin: 0 auto; align-items: center; 
 }
-.guide-text { color: #666; font-size: 1.2rem; }
-
+.guide-text { 
+  color: #e63946; /* Đổi màu đỏ */
+  font-size: 1.3rem; /* Cho to hơn xíu */
+  font-weight: bold; /* In đậm */
+  margin-bottom: 10px;
+  animation: pulse 1.5s infinite; /* Dùng luôn hiệu ứng nhịp tim có sẵn trong file css của bạn để gây chú ý */
+}
 .shirt-wrapper { 
   position: relative; width: 100%; max-width: 400px; margin: 0 auto; 
   filter: drop-shadow(0 10px 15px rgba(0,0,0,0.05)); 
