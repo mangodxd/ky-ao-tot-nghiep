@@ -216,18 +216,17 @@ const app = {
       x = this.currentX;
       y = this.currentY;
     } else {
-      let larping = true
-      let attempts = 0
-      while (larping && attempts < 50) {
-        x = 0.2 + Math.random() * 0.7;
-        y = 0.2 + Math.random() * 0.7;
+      let larping = true;
+      let attempts = 0;
+      while (larping && attempts < 100) {
+        x = 0.25 + Math.random() * 0.5;
+        y = 0.25 + Math.random() * 0.65;
         
         larping = this.signatures.some(sig => {
           if (sig.side !== this.signSide) return false;
-          const dx = sig.x - x;
-          const dy = sig.y - y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          return distance < 0.12;
+          const dx = Math.abs(sig.x - x) < 0.28;
+          const dy = Math.abs(sig.y - y) < 0.12;
+          return dx && dy;
         });
         attempts++;
       }
@@ -261,9 +260,12 @@ const app = {
         
         this.showToast('Bạn đã ký thành công! Đang chuyển trang...', 'success');
         setTimeout(() => location.hash = '#/wall', 1500);
-    } catch(e) {} finally {
-        submitBtn.innerText = "LƯU LẠI BÚT TÍCH";
-        submitBtn.disabled = false;
+    } catch(e) {
+      this.showToast('Lưu thất bại, hãy thử bấm lưu lại nhé!', 'error');
+      console.error("Lỗi khi submit:", e);
+    } finally {
+      submitBtn.innerText = "LƯU LẠI BÚT TÍCH";
+      submitBtn.disabled = false;
     }
   },
 
@@ -433,39 +435,45 @@ const app = {
 
   buildAnimatedBackground() {
     const bgContainer = document.getElementById('wall-bg-animation');
-    if(bgContainer.innerHTML.trim() !== '') return; // Đã build rồi thì bỏ qua
+    if(bgContainer.innerHTML.trim() !== '') return; 
     if (this.fakePool.length === 0) this.generateFakeSignaturesPool();
     const screenWidth = window.innerWidth;
     const colCount = Math.floor(screenWidth / 130) + 1; // Mỗi cột ~120px + gap
     
-    // Pool tổng: real images trước, thiếu thì bù fake
-    let sourceImages = this.signatures.map(s => s.signature);
-    let pool = [...sourceImages, ...this.fakePool];
+    const realSig = this.signatures.map(s => s.signature);
+    const fakeSig = this.fakePool;
+
+    const ratio = 0.7; // 70% real, 30% fake
+
     
     // Shuffle nhẹ pool cho tự nhiên
-    pool.sort(() => Math.random() - 0.5);
+    realSig.sort(() => Math.random() - 0.5);
 
     for (let i = 0; i < colCount; i++) {
       const col = document.createElement('div');
       col.className = `bg-column ${i % 2 === 0 ? 'scroll-up' : 'scroll-down'}`;
       
-      // Speed lệch nhau 20%
       const speed = 20 + Math.random() * 10;
       col.style.animationDuration = `${speed}s`;
 
-      // Cần đủ dài để scroll (nhân đôi nội dung)
       let innerHTML = '';
-      const itemsPerCol = 10; // Đảm bảo màn hình lớn cũng phủ kín
+      const itemsPerCol = 10;
       
       const buildBoxes = () => {
         for(let j=0; j<itemsPerCol; j++) {
-           const imgSrc = pool[(i * itemsPerCol + j) % pool.length];
+           let imgSrc;
+           if (realSig.length > 0 && Math.random() < ratio) {
+               imgSrc = realSig[Math.floor(Math.random() * realSig.length)];
+           } else {
+               imgSrc = fakeSig[Math.floor(Math.random() * fakeSig.length)];
+           }
+           
            innerHTML += `<div class="fake-sig-box"><img src="${imgSrc}" alt="sig"></div>`;
         }
       };
       
       buildBoxes();
-      buildBoxes(); // Nhân đôi để loop CSS mượt
+      buildBoxes(); // doubling for smoothing
 
       col.innerHTML = innerHTML;
       bgContainer.appendChild(col);
