@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ký Đi Chờ Chi</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=DM+Serif+Display&family=Patrick+Hand&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <section id="sign-view" class="view hidden">
+      <div class="sign-container">
+        
+        <div class="preview-col">
+          <h2 class="title">Để lại chữ ký của bạn...</h2>
+          <div class="side-toggle">
+            <button class="active" data-side="front" onclick="app.setSignSide('front')">Mặt trước</button>
+            <button data-side="back" onclick="app.setSignSide('back')">Mặt sau</button>
+          </div>
+          <p class="guide-text">Chạm vào áo để chọn chỗ ký nhé!</p>
+          
+          <div class="shirt-wrapper">
+            <svg viewBox="0 0 200 250" class="shirt-svg">
+              <path d="M80 20 C80 20 100 40 120 20 L180 30 L190 70 L160 80 L150 230 C150 235 50 235 50 230 L40 80 L10 70 L20 30 Z" fill="#fdfbf7" stroke="#cbd5e1" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M80 20 C80 20 100 40 120 20 C120 20 100 30 80 20 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" id="shirt-collar"/>
+            </svg>
+            <div id="sign-safe-zone" class="safe-zone" onclick="app.pickLocation(event)">
+              <div id="location-marker" class="marker hidden">✕</div>
+              <div id="preview-signatures" class="sigs-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-col">
+          <div class="form-card">
+            <input type="text" id="signer-name" placeholder="Tên của bạn là..." autocomplete="off">
+            
+            <div class="canvas-wrapper">
+              <div class="canvas-placeholder">Ký vào đây — càng bay bổng càng đẹp!</div>
+              <canvas id="sig-canvas"></canvas>
+              <button id="clear-btn" class="icon-btn" title="Ký lại">🗑️</button>
+            </div>
+            
+            <div class="ink-selection">
+              <span>Màu mực:</span>
+              <div class="color-presets">
+                <div class="preset active" style="background: #1a1a2e" data-color="#1a1a2e" onclick="app.setColor('#1a1a2e', this)"></div>
+                <div class="preset" style="background: #e63946" data-color="#e63946" onclick="app.setColor('#e63946', this)"></div>
+                <div class="preset" style="background: #9b5de5" data-color="#9b5de5" onclick="app.setColor('#9b5de5', this)"></div>
+                <div class="preset custom-color-wrapper" title="Chọn màu tùy ý">
+                    <input type="color" id="ink-color" value="#00a8ff" onchange="app.setColor(this.value, this.parentElement)">
+                </div>
+              </div>
+            </div>
+
+            <button id="submit-btn" class="primary-btn" onclick="app.submitSignature()">LƯU BÚT TÍCH</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="wall-view" class="view hidden">
+      <div id="wall-bg-animation" class="wall-bg-animation"></div>
+
+      <header class="wall-header">
+        <div class="header-left">
+          <h1 class="title">Áo của <span id="owner-display">Đang tải...</span></h1>
+          <button class="outline-btn" onclick="location.hash='#/sign'">+ Ký áo</button>
+        </div>
+        
+        <div class="search-container">
+          <div class="search-box">
+            <input type="text" id="search-input" placeholder="Tìm chữ ký của bạn..." onkeypress="if(event.key==='Enter') app.searchSignature()">
+            <button onclick="app.searchSignature()">Tìm kiếm</button>
+          </div>
+          <div id="search-nav-ui" class="search-nav-ui hidden">
+            <div class="search-status">
+              <span id="search-badge-text" class="search-badge-text"></span>
+              <div class="search-nav-buttons">
+                <button onclick="app.cycleSearch(-1)">←</button>
+                <button onclick="app.cycleSearch(1)">→</button>
+              </div>
+            </div>
+            <div class="search-hint">Không tìm thấy chữ của mình? Xem thời gian ký bên dưới tên nhé.</div>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-text" style="text-align: right;">Đã có <span id="sig-count">0</span> chữ ký</div>
+        </div>
+      </header>
+
+      <div class="wall-content">
+        <div class="shirts-container">
+          <div class="shirt-column">
+            <div class="shirt-wrapper large">
+              <svg viewBox="0 0 200 250" class="shirt-svg">
+                <path d="M80 20 C80 20 100 40 120 20 L180 30 L190 70 L160 80 L150 230 C150 235 50 235 50 230 L40 80 L10 70 L20 30 Z" fill="#fdfbf7" stroke="#cbd5e1" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M80 20 C80 20 100 40 120 20 C120 20 100 30 80 20 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+              </svg>
+              <div id="wall-safe-zone-front" class="safe-zone">
+                <div id="wall-signatures-front" class="sigs-container"></div>
+              </div>
+            </div>
+            <div class="shirt-label">MẶT TRƯỚC</div>
+          </div>
+
+          <div class="shirt-column">
+            <div class="shirt-wrapper large">
+              <svg viewBox="0 0 200 250" class="shirt-svg">
+                <path d="M80 20 C80 20 100 25 120 20 L180 30 L190 70 L160 80 L150 230 C150 235 50 235 50 230 L40 80 L10 70 L20 30 Z" fill="#fdfbf7" stroke="#cbd5e1" stroke-width="3" stroke-linejoin="round"/>
+              </svg>
+              <div id="wall-safe-zone-back" class="safe-zone">
+                <div id="wall-signatures-back" class="sigs-container"></div>
+              </div>
+            </div>
+            <div class="shirt-label">MẶT SAU</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast-container"></div>
+  <div id="modal-overlay" class="hidden">
+    <div id="modal-box">
+      <div id="modal-icon"></div>
+      <div id="modal-title"></div>
+      <div id="modal-message"></div>
+      <div id="modal-actions">
+        <button id="modal-cancel" class="outline-btn hidden">Huỷ</button>
+        <button id="modal-confirm" class="primary-btn" style="width:auto; padding: 10px 20px;">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
