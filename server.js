@@ -41,6 +41,10 @@ async function uploadToGitHub(path, contentBase64, message, sha = null) {
     });
 }
 
+app.get('/ping', (req, res) => {
+    res.status(200).send('OK');
+});
+
 app.get('/api/signatures', async (req, res) => {
     try {
         const file = await getGitHubFile(JSON_FILE_PATH);
