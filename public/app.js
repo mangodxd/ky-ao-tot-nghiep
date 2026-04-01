@@ -102,6 +102,13 @@ const app = {
       velocityFilterWeight: 0.7
     });
 
+    const preventScroll = (e) => {
+      e.preventDefault();
+    };
+    canvas.addEventListener('touchstart', preventScroll, { passive: false });
+    canvas.addEventListener('touchmove', preventScroll, { passive: false });
+    canvas.addEventListener('touchend', preventScroll, { passive: false });
+
     document.getElementById('clear-btn').addEventListener('click', () => {
       this.pad.clear();
       document.querySelector('.canvas-placeholder').style.display = 'block';
