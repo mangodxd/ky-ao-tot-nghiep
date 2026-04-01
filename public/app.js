@@ -283,6 +283,8 @@ const app = {
       document.getElementById('wall-view').classList.remove('hidden');
       this.renderWall();
     } else {
+      const randomSide = Math.random() > 0.5 ? 'front' : 'back';
+      this.setSignSide(randomSide);
       document.getElementById('sign-view').classList.remove('hidden');
       setTimeout(() => this.resizeCanvas(), 50);
       this.renderPreviewSignatures();
