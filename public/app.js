@@ -84,11 +84,11 @@ const app = {
       });
       const data = await res.json();
       if(data.success) {
-        this.signatures.push(data.newSig);
+        this.signatures.push(data.newSig); 
       }
     } catch (err) {
       console.error("cannot save:", err);
-      this.showToast("Lỗi Server, chưa lưu được nhé!", "error");
+      this.showToast("Lỗi kết nối GitHub, thử lại nhé!", "error");
       throw err; 
     }
   },

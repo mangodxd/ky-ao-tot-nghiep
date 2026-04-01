@@ -89,6 +89,7 @@ body {
 .safe-zone { 
   position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; 
   clip-path: polygon(40% 8%, 60% 8%, 90% 12%, 95% 28%, 80% 32%, 75% 92%, 50% 94%, 25% 92%, 20% 32%, 5% 28%, 10% 12%); 
+  overflow: visible !important;
 }
 .marker { 
   position: absolute; color: red; font-weight: bold; font-size: 14px; 
@@ -209,7 +210,7 @@ body {
 .sig-wrapper { 
   position: absolute; transform: translate(-50%, -50%); pointer-events: auto; 
 }
-.sig-wrapper:hover, .sig-wrapper.force-tooltip, .sig-wrapper.highlight { z-index: 100; }
+.sig-wrapper:hover, .sig-wrapper.force-tooltip, .sig-wrapper.highlight { z-index: 999; }
 
 .sig-img { 
   width: 80px; transform-origin: center; pointer-events: auto; 
@@ -228,6 +229,7 @@ body {
   opacity: 0; pointer-events: none; transition: all 0.2s; 
   z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   margin-bottom: 25px; 
+  pointer-events: none;
 }
 .sig-wrapper:hover::after, .force-tooltip::after { opacity: 1; transform: translateX(-50%) translateY(-5px); }
 
