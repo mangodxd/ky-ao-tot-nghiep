@@ -89,7 +89,7 @@ body {
 .safe-zone { 
   position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; 
   clip-path: polygon(40% 8%, 60% 8%, 90% 12%, 95% 28%, 80% 32%, 75% 92%, 50% 94%, 25% 92%, 20% 32%, 5% 28%, 10% 12%); 
-  overflow: visible !important;
+  overflow: visible !important; /* Quan trọng để thấy tooltip khi đang chọn chỗ ký */
 }
 .marker { 
   position: absolute; color: red; font-weight: bold; font-size: 14px; 
@@ -134,7 +134,7 @@ body {
    ========================================= */
 .wall-header { 
   display: flex; justify-content: space-between; align-items: flex-start; 
-  max-width: 1200px; margin: 0 auto 20px; flex-wrap: wrap; gap: 15px; position: relative; z-index: 10; 
+  max-width: 1200px; margin: 0 auto 20px; flex-wrap: wrap; gap: 15px; position: relative; z-index: 1000; 
 }
 .header-left { 
   display: flex; align-items: center; gap: 20px; flex-wrap: wrap; max-width: 100%; 
@@ -178,8 +178,13 @@ body {
 .shirt-column { 
   background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px); padding: 20px 20px 10px; 
   border-radius: 24px; flex: 1; max-width: 450px; min-width: 280px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); 
+  overflow: visible !important; 
 }
-.shirt-wrapper.large { max-width: 100%; margin: 0 auto; }
+.shirt-wrapper.large { 
+  max-width: 100%; 
+  margin: 0 auto; 
+  overflow: visible !important; 
+}
 .shirt-label { 
   margin-top: 15px; font-family: var(--font-hand); font-size: 1.4rem; 
   color: #64748b; letter-spacing: 2px; font-style: italic; opacity: 0.8; 
@@ -209,8 +214,12 @@ body {
    ========================================= */
 .sig-wrapper { 
   position: absolute; transform: translate(-50%, -50%); pointer-events: auto; 
+  z-index: 5; 
 }
-.sig-wrapper:hover, .sig-wrapper.force-tooltip, .sig-wrapper.highlight { z-index: 999; }
+
+.sig-wrapper:hover, .sig-wrapper.force-tooltip, .sig-wrapper.highlight { 
+  z-index: 9999 !important; 
+}
 
 .sig-img { 
   width: 80px; transform-origin: center; pointer-events: auto; 
@@ -223,15 +232,30 @@ body {
 
 /* tooltip Name - Time */
 .sig-wrapper::after {
-  content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%;
-  transform: translateX(-50%) translateY(0); background: var(--navy); color: white;
-  padding: 6px 10px; border-radius: 6px; font-size: 0.95rem; white-space: nowrap;
-  opacity: 0; pointer-events: none; transition: all 0.2s; 
-  z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  margin-bottom: 25px; 
+  content: attr(data-tooltip); 
+  position: absolute; 
+  bottom: 110%; 
+  left: 50%;
+  transform: translateX(-50%) translateY(10px); 
+  background: var(--navy); 
+  color: white;
+  padding: 6px 12px; 
+  border-radius: 8px; 
+  font-size: 0.9rem; 
+  white-space: nowrap;
+  opacity: 0; 
+  pointer-events: none; 
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  z-index: 10000; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   pointer-events: none;
 }
-.sig-wrapper:hover::after, .force-tooltip::after { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
+/* Hiệu ứng mượt khi hiện tooltip */
+.sig-wrapper:hover::after, .force-tooltip::after { 
+  opacity: 1; 
+  transform: translateX(-50%) translateY(0); 
+}
 
 /* highlight badge */
 .highlight .sig-img { animation: pulse 1.5s infinite; filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.8)); transform: scale(1.4) !important; }
@@ -259,7 +283,7 @@ body {
 /* =========================================
    CUSTOM ALERT SYSTEM
    ========================================= */
-#toast-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; pointer-events: none; }
+#toast-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 99999; pointer-events: none; }
 .custom-toast { 
   background: white; color: var(--text-dark); padding: 12px 20px; border-radius: 12px; 
   box-shadow: 0 6px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; 
@@ -274,7 +298,7 @@ body {
 #modal-overlay { 
   position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); 
   backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; 
-  z-index: 10000; transition: opacity 0.3s; 
+  z-index: 100000; transition: opacity 0.3s; 
 }
 #modal-overlay.hidden { display: none !important; }
 #modal-box { 
