@@ -95,10 +95,13 @@ const app = {
 
   setupCanvas() {
     const canvas = document.getElementById('sig-canvas');
+    
+    this.handleCanvasScaling(canvas);
+
     this.pad = new SignaturePad(canvas, {
       penColor: this.inkColor,
-      minWidth: 3, 
-      maxWidth: 6,
+      minWidth: 2, 
+      maxWidth: 5,
       velocityFilterWeight: 0.7
     });
 
@@ -123,14 +126,25 @@ const app = {
     });
   },
 
+  handleCanvasScaling(canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    
+    // Set kích thước pixel thực tế
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    
+    // Reset lại scale và set transform mới để tránh lỗi nhân dồn scale
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset về 1:1
+    ctx.scale(ratio, ratio); // Apply scale mới theo màn hình
+  },
+
   resizeCanvas() {
     const canvas = document.getElementById('sig-canvas');
     const data = this.pad ? this.pad.toData() : null; 
     
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
+    this.handleCanvasScaling(canvas);
     
     this.pad.clear();
     if (data && data.length > 0) {
