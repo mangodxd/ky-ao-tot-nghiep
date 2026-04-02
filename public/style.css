@@ -80,11 +80,11 @@ body {
   max-width: 1000px; margin: 0 auto; align-items: center; 
 }
 .guide-text { 
-  color: #e63946; /* Đổi màu đỏ */
-  font-size: 1.3rem; /* Cho to hơn xíu */
-  font-weight: bold; /* In đậm */
+  color: #e63946;
+  font-size: 1.3rem;
+  font-weight: bold;
   margin-bottom: 10px;
-  animation: pulse 1.5s infinite; /* Dùng luôn hiệu ứng nhịp tim có sẵn trong file css của bạn để gây chú ý */
+  animation: pulse 1.5s infinite;
 }
 .shirt-wrapper { 
   position: relative; width: 100%; max-width: 400px; margin: 0 auto; 
@@ -94,7 +94,7 @@ body {
 .safe-zone { 
   position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; 
   clip-path: polygon(40% 8%, 60% 8%, 90% 12%, 95% 28%, 80% 32%, 75% 92%, 50% 94%, 25% 92%, 20% 32%, 5% 28%, 10% 12%); 
-  overflow: visible !important; /* Quan trọng để thấy tooltip khi đang chọn chỗ ký */
+  overflow: visible !important;
 }
 .marker { 
   position: absolute; 
@@ -199,6 +199,19 @@ body {
   color: #64748b; letter-spacing: 2px; font-style: italic; opacity: 0.8; 
 }
 
+/* Cắt phần chữ ký bị tràn ra ngoài áo ở trang Wall */
+.wall-content .sigs-container {
+  clip-path: polygon(40% 8%, 60% 8%, 90% 12%, 95% 28%, 80% 32%, 75% 92%, 50% 94%, 25% 92%, 20% 32%, 5% 28%, 10% 12%);
+  transition: clip-path 0.3s ease;
+}
+
+/* Bỏ giới hạn cắt khi hover, click hoặc đang tìm kiếm để chữ ký bung ra ngoài */
+.wall-content .sigs-container:has(.sig-wrapper:hover),
+.wall-content .sigs-container:has(.force-tooltip),
+.wall-content .sigs-container:has(.highlight) {
+  clip-path: polygon(-50% -50%, 150% -50%, 150% 150%, -50% 150%);
+}
+
 /* =========================================
    BACKGROUND ANIMATION
    ========================================= */
@@ -231,12 +244,15 @@ body {
 }
 
 .sig-img { 
-  width: 80px; transform-origin: center; pointer-events: auto; 
+  width: 52.3px; 
+  transform-origin: center; pointer-events: auto; 
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
   position: relative; z-index: 1; 
 }
+
 .sig-img:hover, .force-tooltip .sig-img { 
-  transform: scale(1.4) rotate(0deg) !important; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+  transform: scale(2.2) rotate(0deg) !important; 
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
 }
 
 /* tooltip Name - Time */
@@ -264,14 +280,13 @@ body {
   pointer-events: none;
 }
 
-/* Hiệu ứng mượt khi hiện tooltip */
 .sig-wrapper:hover::after, .force-tooltip::after { 
   opacity: 1; 
   transform: translateX(-50%) translateY(0); 
 }
 
 /* highlight badge */
-.highlight .sig-img { animation: pulse 1.5s infinite; filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.8)); transform: scale(1.4) !important; }
+.highlight .sig-img { animation: pulse 1.5s infinite; filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.8)); transform: scale(2) !important; }
 .active-match .sig-img { animation: pulseActive 1s infinite; filter: drop-shadow(0 0 12px rgba(43, 147, 72, 1)); }
 
 .highlight-badge { 
@@ -289,8 +304,8 @@ body {
 .active-match .highlight-badge { background: #2b9348; }
 .active-match .highlight-badge::after { border-color: #2b9348 transparent transparent transparent; }
 
-@keyframes pulse { 0% { transform: scale(1.2); } 50% { transform: scale(1.4); } 100% { transform: scale(1.2); } }
-@keyframes pulseActive { 0% { transform: scale(1.3); } 50% { transform: scale(1.6); } 100% { transform: scale(1.3); } }
+@keyframes pulse { 0% { transform: scale(1.8); } 50% { transform: scale(2.2); } 100% { transform: scale(1.8); } }
+@keyframes pulseActive { 0% { transform: scale(2); } 50% { transform: scale(2.5); } 100% { transform: scale(2); } }
 @keyframes popIn { 0% { transform: translateX(-50%) scale(0.5); opacity: 0; } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
 
 /* =========================================
@@ -330,7 +345,7 @@ body {
    RESPONSIVE DESIGN
    ========================================= */
 
-/* laptop screens (fixing scale issues) */
+/* laptop screens */
 @media screen and (max-width: 1440px) {
   :root { font-size: 14px; }
   #app { zoom: 0.85; }

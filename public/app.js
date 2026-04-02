@@ -211,7 +211,7 @@ const app = {
     const finalSignatureImage = this.trimCanvas();
     if(!finalSignatureImage) return this.showToast("Bút bị khô mực rùi, bạn ký lại nhé!", "error");
 
-    let x,y 
+    let x, y;
     if (this.currentX !== null && this.currentY !== null) {
       x = this.currentX;
       y = this.currentY;
@@ -219,13 +219,15 @@ const app = {
       let larping = true;
       let attempts = 0;
       while (larping && attempts < 100) {
-        x = 0.25 + Math.random() * 0.5;
-        y = 0.25 + Math.random() * 0.65;
+        // Mở rộng vùng random để sử dụng tối đa diện tích áo
+        x = 0.2 + Math.random() * 0.6;
+        y = 0.15 + Math.random() * 0.75;
         
         larping = this.signatures.some(sig => {
           if (sig.side !== this.signSide) return false;
-          const dx = Math.abs(sig.x - x) < 0.28;
-          const dy = Math.abs(sig.y - y) < 0.12;
+          // Giảm khoảng cách va chạm để nhét vừa nhiều người
+          const dx = Math.abs(sig.x - x) < 0.12; 
+          const dy = Math.abs(sig.y - y) < 0.08; 
           return dx && dy;
         });
         attempts++;
@@ -298,7 +300,6 @@ const app = {
 
   renderWall() {
     document.getElementById('sig-count').innerText = this.signatures.length;
-    // Render song song 2 mặt
     this.buildSignaturesDOM(document.getElementById('wall-signatures-front'), 'front', this.signatures);
     this.buildSignaturesDOM(document.getElementById('wall-signatures-back'), 'back', this.signatures);
     this.buildAnimatedBackground();
@@ -314,7 +315,6 @@ const app = {
       wrapper.style.left = `${sig.x * 100}%`;
       wrapper.style.top = `${sig.y * 100}%`;
 
-      // Cập nhật tooltip theo format "Tên — 01/06/2025 lúc 20:34"
       wrapper.setAttribute('data-tooltip', `${sig.name} — ${this.formatDateTime(sig.createdAt)}`);
 
       const img = document.createElement('img');
@@ -342,7 +342,6 @@ const app = {
   searchSignature() {
     const query = document.getElementById('search-input').value.toLowerCase().trim();
     
-    // Reset highlights
     document.querySelectorAll('.sig-wrapper').forEach(el => { 
       el.classList.remove('highlight', 'active-match'); 
       el.querySelector('.highlight-badge')?.remove(); 
@@ -351,13 +350,11 @@ const app = {
 
     if (!query) return;
     
-    // Tìm tất cả kết quả khớp
     this.searchMatches = this.signatures.filter(s => s.name.toLowerCase().includes(query));
     
     if (this.searchMatches.length > 0) {
       this.currentMatchIndex = 0;
       
-      // Highlight tất cả
       this.searchMatches.forEach((target, index) => {
         const sigEl = document.getElementById(`sig-${target.id}`);
         if (sigEl) {
@@ -369,11 +366,9 @@ const app = {
         }
       });
 
-      // Update UI hiển thị số lượng
       document.getElementById('search-badge-text').innerText = `Tìm thấy ${this.searchMatches.length} chữ ký của "${query}" 👇`;
       document.getElementById('search-nav-ui').classList.remove('hidden');
 
-      // Scroll tới cái đầu tiên
       this.focusMatch(0);
     } else {
       this.showToast("Chưa thấy tên này, hãy nhấn 'Ký áo' để ký nhé!", "info");
@@ -389,7 +384,6 @@ const app = {
   },
 
   focusMatch(index) {
-    // Gỡ active khỏi tất cả, chỉ focus cái hiện tại
     document.querySelectorAll('.sig-wrapper.highlight').forEach(el => el.classList.remove('active-match'));
     
     const target = this.searchMatches[index];
@@ -440,15 +434,13 @@ const app = {
     if(bgContainer.innerHTML.trim() !== '') return; 
     if (this.fakePool.length === 0) this.generateFakeSignaturesPool();
     const screenWidth = window.innerWidth;
-    const colCount = Math.floor(screenWidth / 130) + 1; // Mỗi cột ~120px + gap
+    const colCount = Math.floor(screenWidth / 130) + 1; 
     
     const realSig = this.signatures.map(s => s.signature);
     const fakeSig = this.fakePool;
 
-    const ratio = 0.7; // 70% real, 30% fake
+    const ratio = 0.7; 
 
-    
-    // Shuffle nhẹ pool cho tự nhiên
     realSig.sort(() => Math.random() - 0.5);
 
     for (let i = 0; i < colCount; i++) {
@@ -475,7 +467,7 @@ const app = {
       };
       
       buildBoxes();
-      buildBoxes(); // doubling for smoothing
+      buildBoxes(); 
 
       col.innerHTML = innerHTML;
       bgContainer.appendChild(col);
